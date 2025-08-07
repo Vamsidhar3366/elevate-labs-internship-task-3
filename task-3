@@ -1,0 +1,29 @@
+import requests
+from bs4 import BeautifulSoup
+
+# URL of the news website (example: BBC News)
+URL = "https://www.bbc.com/news"
+
+# Send a GET request to fetch the HTML content
+response = requests.get(URL)
+
+# Check if the request was successful
+if response.status_code == 200:
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Extract headlines from h2 tags (you can change tag/class based on actual site)
+    headlines = []
+
+    for tag in soup.find_all('h2'):
+        title = tag.get_text(strip=True)
+        if title:
+            headlines.append(title)
+
+    # Save the headlines to a .txt file
+    with open("headlines.txt", "w", encoding="utf-8") as file:
+        for i, headline in enumerate(headlines, 1):
+            file.write(f"{i}. {headline}\n")
+
+    print(f"{len(headlines)} headlines saved to 'headlines.txt'")
+else:
+    print("Failed to retrieve the news page. Status code:", response.status_code)
